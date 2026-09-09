@@ -121,6 +121,7 @@ connection.execute(
 connection.commit()
 print("update complete")
 
+<<<<<<< HEAD
 connection.execute(
     "insert into pet (name, kind, age, food) values (?, ?, ?, ?)",
     ("Carrot", "chinchilla", 3, "salmon"),
@@ -128,6 +129,8 @@ connection.execute(
 connection.commit()
 print("insertion complete")
 
+=======
+>>>>>>> db8f7c2f2746feb2a20c0e8e38bab6d35c88e111
 cursor = connection.execute("select * from pet")
 rows = cursor.fetchall()
 pprint(rows)
