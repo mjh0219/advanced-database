@@ -75,6 +75,44 @@ def update_owner(id, data):
     )
     connection.commit()
 
+def get_foods():
+    cursor = connection.cursor()
+    cursor.execute("""select * from food""")
+    foods = [dict(food) for food in cursor.fetchall()]
+    return foods
+
+def get_food(id):
+    id = int(id)
+    cursor = connection.cursor()
+    cursor.execute("select * from food where id = ?", (id,))
+    foods = [dict(row) for row in cursor.fetchall()]
+    if len(foods) == 0:
+        return None
+    assert len(foods) == 1
+    return foods[0]
+
+def create_food(data):
+    cursor = connection.cursor()
+    cursor.execute(
+        """insert into food(name) values (?)""",
+        (data["name"]),
+    )
+    connection.commit()
+    return cursor.lastrowid
+
+def delete_food(id):
+    id = int(id)
+    cursor = connection.cursor()
+    cursor.execute("""delete from food where id = ?""", (id,))
+    connection.commit()
+
+def update_food(id, data):
+    cursor = connection.cursor()
+    cursor.execute(
+        """update food set name=? where id=?""",
+        (data["name"], id),
+    )
+    connection.commit()
 
 def get_pets():
     cursor = connection.cursor()
