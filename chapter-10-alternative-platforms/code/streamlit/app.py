@@ -74,6 +74,21 @@ def owner_form(owner=None):
         else:
             save(lambda: database.create_owner(data), "Owner added.")
 
+# def food_table(Food=None):
+#     Food = Food or {"name": "", "count": ""}
+#     prefix = "food_" + str(Food.get("id", "new"))
+#     with st.form(prefix):
+#         food = st.text_input("Food", value=pet["food"] or "", key=prefix + "_food")
+#         count = st.number_input("Count", min_value=0, value=food["count"], step=1,
+#                               key=prefix + "_count")
+#         submitted = st.form_submit_button("Save food")
+#     if submitted:
+#         data = {"name": name, "count": count}
+#         if "id" in pet:
+#             save(lambda: database.update_food(food["id"], data), "Food updated.")
+#         else:
+#             save(lambda: database.create_food(data), "Food added.")
+
 
 page = st.sidebar.radio("Manage", ["Pets", "Owners"])
 action = st.sidebar.radio("Action", ["List", "Add", "Edit", "Delete"])
@@ -94,7 +109,7 @@ elif action in ("Edit", "Delete"):
                                 key=page + "_selected")
         record = choices[selected]
         if action == "Edit":
-            pet_form(record) if page == "Pets" else owner_form(record)
+            pet_form() if page == "Pets" else owner_form()
         else:
             # Confirmation belongs to the selected record, not the entire page.
             confirmed = st.checkbox("Confirm deletion of " + record["name"],
