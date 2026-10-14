@@ -1,26 +1,62 @@
-<html>
-<h3>Owners:</h3>
-<table>
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>City</th>
-        <th>Type of Home</th>
-    </tr>
-    {% for owner in owners %}
-    <tr>
-        <td>{{ owner['id'] }}</td>
-        <td>{{ owner['name'] }}</td>
-        <td>{{ owner['city'] }}</td>
-        <td>{{ owner['type_of_home'] }}</td>
-        <td><a href="/owner/delete/{{owner['id']}}">Delete</a></td>
-        <td><a href="/owner/update/{{owner['id']}}">Update</a></td>
-    </tr>
-    {% endfor %}
-</table>
-<hr />
-<a href="/owner/create">Create New Owner</a>
-<hr />
-<a href="/list">Back to Pets</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Manager - Owners</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
 
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/list">Pets App</a>
+        <div class="navbar-nav">
+            <a class="nav-link" href="/list">Pets</a>
+            <a class="nav-link active" href="/owners">Owners</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h3 mb-0">Registered Owners</h2>
+        <a href="/owner/create" class="btn btn-success">+ Add New Owner</a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Owner Name</th>
+                        <th>City</th>
+                        <th>Type of Home</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for owner in owners %}
+                    <tr>
+                        <td class="fw-semibold">{{ owner.name }}</td>
+                        <td>{{ owner.city if owner.city else '-' }}</td>
+                        <td>{{ owner.type_of_home if owner.type_of_home else '-' }}</td>
+                        <td class="text-end">
+                            <a href="/owner/update/{{ owner.id }}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+                            <a href="/owner/delete/{{ owner.id }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this owner? Their pets will remain intact.')">Delete</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center py-4 text-muted">No owners registered yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>

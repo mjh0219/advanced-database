@@ -1,28 +1,82 @@
-<html>
-<h3>Pets:</h3>
-<table>
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Age</th>
-        <th>Owner ID</th>
-    </tr>
-    {% for pet in pets %}
-    <tr>
-        <td>{{ pet['id'] }}</td>
-        <td>{{ pet['name'] }}</td>
-        <td>{{ pet['type'] }}</td>
-        <td>{{ pet['age'] }}</td>
-        <td>{{ pet['owner_id'] }}</td>
-        <td><a href="/delete/{{pet['id']}}">Delete</a></td>
-        <td><a href="/update/{{pet['id']}}">Update</a></td>
-    </tr>
-    {% endfor %}
-</table>
-<hr />
-<a href="/create">Create New Pet</a>
-<hr />
-<a href="/owners">Manage Owners</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Manager - Pets</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
 
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/list">Pets App</a>
+        <div class="navbar-nav">
+            <a class="nav-link active" href="/list">Pets</a>
+            <a class="nav-link" href="/owners">Owners</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h3 mb-0">Pet Registry</h2>
+        <a href="/create" class="btn btn-primary">+ Add New Pet</a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Pet Name</th>
+                        <th>Species / Type</th>
+                        <th>Age</th>
+                        <th>Owner</th>
+                        <th>Food Menu</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pet in pets %}
+                    <tr>
+                        <td class="fw-semibold">{{ pet.name }}</td>
+                        <td><span class="badge bg-secondary">{{ pet.type }}</span></td>
+                        <td>{{ pet.age }} yrs</td>
+                        <td>
+                            {% if pet.owner_name and pet.owner_name != "None" %}
+                                <span class="badge bg-info text-dark">{{ pet.owner_name }}</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Unassigned</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if pet.foods and pet.foods|length > 0 %}
+                                <ul class="list-unstyled mb-0 small">
+                                    {% for food in pet.foods %}
+                                        <li><strong>{{ food.name }}</strong></li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <span class="text-muted small">No food registered</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <a href="/update/{{ pet.id }}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+                            <a href="/delete/{{ pet.id }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this pet?')">Delete</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">No pets registered yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>

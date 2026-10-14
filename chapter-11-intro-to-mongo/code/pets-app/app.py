@@ -14,10 +14,16 @@ def error_page(message, status=400):
     return message, status, {"Content-Type": "text/plain; charset=utf-8"}
 
 
+# ----------------------------------------------------
+# Pet Routes
+# ----------------------------------------------------
 @app.route("/", methods=["GET"])
 @app.route("/list", methods=["GET"])
 def get_list():
     pets = database.get_pets()
+    owners = {o["id"]: o["name"] for o in database.get_owners()}
+    for pet in pets:
+        pet["owner_name"] = owners.get(pet.get("owner_id"), "None")
     return render_template("list.html", pets=pets)
 
 
@@ -80,6 +86,40 @@ def post_update(id):
         return error_page(f"Unexpected error updating pet: {e}", 500)
 
 
+# ----------------------------------------------------
+# Embedded Food Routes
+# ----------------------------------------------------
+@app.route("/pet/<id>/food/add", methods=["POST"])
+def post_pet_food_add(id):
+    food_data = {
+        "name": request.form.get("food_name"),
+        "brand": request.form.get("food_brand"),
+        "portion": request.form.get("food_portion"),
+    }
+    try:
+        database.add_food_to_pet(id, food_data)
+        return redirect(url_for("get_update", id=id))
+    except (ValueError, database.NotFoundError) as e:
+        return error_page(f"Error: {e}", 400)
+    except Exception as e:
+        return error_page(f"Unexpected error adding food: {e}", 500)
+
+
+@app.route("/pet/<id>/food/delete", methods=["POST"])
+def post_pet_food_delete(id):
+    food_name = request.form.get("food_name")
+    try:
+        database.remove_food_from_pet(id, food_name)
+        return redirect(url_for("get_update", id=id))
+    except (ValueError, database.NotFoundError) as e:
+        return error_page(f"Error: {e}", 400)
+    except Exception as e:
+        return error_page(f"Unexpected error deleting food: {e}", 500)
+
+
+# ----------------------------------------------------
+# Owner Routes
+# ----------------------------------------------------
 @app.route("/owners", methods=["GET"])
 def get_owners_list():
     owners = database.get_owners()

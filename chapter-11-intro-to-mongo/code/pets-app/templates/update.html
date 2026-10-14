@@ -1,28 +1,139 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Pet - {{ data.name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
 
-<head></head>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/list">Pets App</a>
+        <div class="navbar-nav">
+            <a class="nav-link active" href="/list">Pets</a>
+            <a class="nav-link" href="/owners">Owners</a>
+        </div>
+    </div>
+</nav>
 
-<body>
-    This is the update template.
-    <form action="/update/{{data['id']}}" method="post">
-        <hr />
-        <p>Name:<input name="name" value="{{data['name']}}" /></p>
-        <p>Age:<input name="age" value="{{data['age']}}" /></p>
-        <p>Type:<input name="type" value="{{data['type']}}" /></p>
-        <p>Owner:
-            <select name="owner_id">
-                {% for owner in owners %}
-                <option value="{{ owner['id'] }}" {% if owner['id'] == data['owner_id'] %}selected{% endif %}>
-                    {{ owner['name'] }}
-                </option>
-                {% endfor %}
-            </select>
-        </p>
-        <hr />
-        <button type="submit">Update</button>
-        <a href="/list">Cancel</a>
-        <hr />
-    </form>
+<div class="container mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="h3 mb-0">Update Pet: <span class="text-primary">{{ data.name }}</span></h2>
+        <a href="/list" class="btn btn-outline-secondary">← Back to Pets</a>
+    </div>
+
+    <div class="row g-4">
+        <!-- Pet Profile Form -->
+        <div class="col-lg-5">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white fw-semibold">
+                    Pet Details
+                </div>
+                <div class="card-body">
+                    <form action="/update/{{ data.id }}" method="POST">
+                        <div class="mb-3">
+                            <label for="name" class="form-label fw-bold">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ data.name }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="type" class="form-label fw-bold">Type / Species</label>
+                            <input type="text" class="form-control" id="type" name="type" value="{{ data.type }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="age" class="form-label fw-bold">Age</label>
+                            <input type="number" class="form-control" id="age" name="age" value="{{ data.age }}" min="0" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="owner_id" class="form-label fw-bold">Owner</label>
+                            <select class="form-select" id="owner_id" name="owner_id">
+                                <option value="">-- No Owner (Unassigned) --</option>
+                                {% for owner in owners %}
+                                    <option value="{{ owner.id }}" {% if data.owner_id == owner.id %}selected{% endif %}>
+                                        {{ owner.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text">De-selecting or deleting an owner will not delete this pet.</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Save Pet Details</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Embedded Food Table and Add Form -->
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-success text-white fw-semibold">
+                    Food Table
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive mb-4">
+                        <table class="table table-bordered table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Food Name</th>
+                                    <th class="text-center" style="width: 90px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if data.foods and data.foods|length > 0 %}
+                                    {% for food in data.foods %}
+                                    <tr>
+                                        <td class="fw-semibold">{{ food.name }}</td>
+                                        <!-- <td>{{ food.brand if food.brand else '-' }}</td>
+                                        <td>{{ food.portion if food.portion else '-' }}</td> -->
+                                        <td class="text-center">
+                                            <form action="/pet/{{ data.id }}/food/delete" method="POST" class="d-inline">
+                                                <input type="hidden" name="food_name" value="{{ food.name }}">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted py-3">
+                                            No food items registered in this pet's table yet.
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="bg-light p-3 rounded border">
+                        <h6 class="fw-bold text-success mb-3">Add Food Item</h6>
+                        <form action="/pet/{{ data.id }}/food/add" method="POST" class="row g-2">
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold">Food Name</label>
+                                <input type="text" name="food_name" class="form-control form-control-sm" placeholder="e.g. Dry Kibble" required>
+                            </div>
+                            <!-- <div class="col-md-4">
+                                <label class="form-label small fw-semibold">Brand</label>
+                                <input type="text" name="food_brand" class="form-control form-control-sm" placeholder="e.g. Royal Canin">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold">Portion</label>
+                                <input type="text" name="food_portion" class="form-control form-control-sm" placeholder="e.g. 1 cup twice daily">
+                            </div> -->
+                            <div class="col-12 mt-3">
+                                <button type="submit" class="btn btn-sm btn-success w-100">+ Add to Food Menu</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>
